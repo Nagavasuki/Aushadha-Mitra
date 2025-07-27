@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aushadha Mitra</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Base styles from your code */
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        background-color: #f4f7f9;
+    }
+    .container {
+        padding: 15px;
+    }
+    .title {
+        text-align: center;
+        color: #1a3b5d;
+        margin-top: 30px;
+    }
+    .search-container {
+      max-width: 700px;
+      margin: 25px auto;
+      position: relative;
+    }
+    .search-bar {
+      position: relative;
+    }
+    .search-bar input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 25px 20px;
+      font-size: 20px;
+      text-align: center;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    .search-bar input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      text-align: left;
+    }
+    .dropdown-container {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+    .dropdown-section {
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .dropdown-section:last-child {
+      border-bottom: none;
+    }
+    .dropdown-header {
+      padding: 8px 20px;
+      font-weight: 600;
+      color: #007bff;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .dropdown-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #f5f5f5;
+      transition: background-color 0.2s;
+    }
+    .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+    .hospital-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hospital-name {
+      font-weight: 500;
+      color: #333;
+    }
+    .hospital-status {
+      font-size: 12px;
+      color: #666;
+    }
+    .wait-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: #28a745;
+    }
+    .symptom-item {
+      color: #555;
+      font-size: 16px;
+    }
+    .image-tabs {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .image-button {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+    }
+    .tab-image {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 5px;
+    }
+
+  </style>
+</head>
+<body class="home-body">
+
+
+  <div class="container">
+    <h1 class="title">Aushadha Mitra </h1>
+
+    <div class="search-container">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍Search hospitals or symptoms..." autocomplete="off" />
+        <div class="dropdown-container" id="dropdownContainer">
+          <!-- Hospitals Section -->
+          <div class="dropdown-section" id="hospitalsSection">
+            <div class="dropdown-header">🏥 Hospitals</div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital A')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital A</div>
+                  <div class="hospital-status">123 Health Street, City A</div>
+                </div>
+                <div class="wait-time">45 min wait</div>
+              </div>
+            </div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital B')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital B</div>
+                  <div class="hospital-status">456 Wellness Avenue, City B</div>
+                </div>
+                <div class="wait-time">25 min wait</div>
+              </div>
+            </div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital C')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital C</div>
+                  <div class="hospital-status">789 Care Boulevard, City C</div>
+                </div>
+                <div class="wait-time">90 min wait</div>
+              </div>
+            </div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital X')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital X</div>
+                  <div class="hospital-status">101 Remedy Lane, City X</div>
+                </div>
+                <div class="wait-time">35 min wait</div>
+              </div>
+            </div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital Y')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital Y</div>
+                  <div class="hospital-status">222 Life Point, City Y</div>
+                </div>
+                <div class="wait-time">55 min wait</div>
+              </div>
+            </div>
+            <div class="dropdown-item" onclick="selectHospital('Hospital Z')">
+              <div class="hospital-item">
+                <div>
+                  <div class="hospital-name">Hospital Z</div>
+                  <div class="hospital-status">333 Hope Plaza, City Z</div>
+                </div>
+                <div class="wait-time">20 min wait</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Symptoms Section -->
+          <div class="dropdown-section" id="symptomsSection">
+            <div class="dropdown-header">🩺 Common Symptoms</div>
+            <div class="dropdown-item" onclick="selectSymptom('Fever')">
+              <div class="symptom-item">Fever</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Headache')">
+              <div class="symptom-item">Headache</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Chest Pain')">
+              <div class="symptom-item">Chest Pain</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Joint Pain')">
+              <div class="symptom-item">Joint Pain</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Stomach Pain')">
+              <div class="symptom-item">Stomach Pain</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Skin Issues')">
+              <div class="symptom-item">Skin Issues</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Eye Problems')">
+              <div class="symptom-item">Eye Problems</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Dental Issues')">
+              <div class="symptom-item">Dental Issues</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Mental Health')">
+              <div class="symptom-item">Mental Health</div>
+            </div>
+            <div class="dropdown-item" onclick="selectSymptom('Breathing Issues')">
+              <div class="symptom-item">Breathing Issues</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="image-tabs">
+      <a href="Hospital.html" class="image-button">
+        <img src="hospitals.png" class="tab-image" alt="Hospitals" />
+        <p>Hospitals</p>
+      </a>
+      <a href="labs.html" class="image-button">
+        <img src="labs.png" class="tab-image" alt="Labs" />
+        <p>Labs</p>
+      </a>
+      <a href="medicines.html" class="image-button">
+        <img src="medicines.png" class="tab-image" alt="Medicines" />
+        <p>Medicines</p>
+      </a>
+      <a href="vaccines.html" class="image-button">
+        <img src="vaccines.png" class="tab-image" alt="Vaccines" />
+        <p>Vaccines</p>
+      </a>
+      <a href="campaigns.html" class="image-button">
+        <img src="campaigns.png" class="tab-image" alt="Health Campaigns" />
+        <p>Campaigns</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const dropdownContainer = document.getElementById('dropdownContainer');
+    const hospitalsSection = document.getElementById('hospitalsSection');
+    const symptomsSection = document.getElementById('symptomsSection');
+    
+    // Hospital data mapping
+    const hospitalMapping = {
+      'Hospital A': 'hospital_a.html',
+      'Hospital B': 'hospital_b.html', 
+      'Hospital C': 'hospital_c.html',
+      'Hospital X': 'hospital_x.html',
+      'Hospital Y': 'hospital_y.html',
+      'Hospital Z': 'hospital_z.html'
+    };
+    
+    // Show dropdown when input is focused
+    searchInput.addEventListener('focus', function() {
+      dropdownContainer.style.display = 'block';
+      filterDropdown('');
+    });
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.search-container')) {
+        dropdownContainer.style.display = 'none';
+      }
+    });
+    
+    // Filter dropdown based on input
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      filterDropdown(searchTerm);
+    });
+    
+    function filterDropdown(searchTerm) {
+      const hospitalItems = hospitalsSection.querySelectorAll('.dropdown-item');
+      const symptomItems = symptomsSection.querySelectorAll('.dropdown-item');
+      
+      let hasVisibleHospitals = false;
+      let hasVisibleSymptoms = false;
+      
+      // Filter hospitals
+      hospitalItems.forEach(item => {
+        const hospitalName = item.querySelector('.hospital-name');
+        if (hospitalName) {
+          const text = hospitalName.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            item.style.display = 'block';
+            hasVisibleHospitals = true;
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+      
+      // Filter symptoms
+      symptomItems.forEach(item => {
+        const symptomText = item.querySelector('.symptom-item');
+        if (symptomText) {
+          const text = symptomText.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            item.style.display = 'block';
+            hasVisibleSymptoms = true;
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+      
+      // Show/hide sections based on visible items
+      hospitalsSection.style.display = hasVisibleHospitals ? 'block' : 'none';
+      symptomsSection.style.display = hasVisibleSymptoms ? 'block' : 'none';
+    }
+    
+    // Handle hospital selection
+    function selectHospital(hospitalName) {
+      const hospitalFile = hospitalMapping[hospitalName];
+      if (hospitalFile) {
+        window.location.href = hospitalFile;
+      }
+    }
+    
+    // Handle symptom selection
+    function selectSymptom(symptom) {
+      // Store the selected symptom in localStorage and redirect to search page
+      localStorage.setItem('selectedSymptom', symptom);
+      window.location.href = 'search.html';
+    }
+    
+    // Handle Enter key press
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const searchTerm = this.value.toLowerCase();
+        
+        // Check if it matches a hospital
+        for (const [hospitalName, hospitalFile] of Object.entries(hospitalMapping)) {
+          if (hospitalName.toLowerCase().includes(searchTerm)) {
+            window.location.href = hospitalFile;
+            return;
+          }
+        }
+        
+        // If no hospital match, treat as symptom and go to search page
+        localStorage.setItem('selectedSymptom', this.value);
+        window.location.href = 'search.html';
+      }
+    });
+  </script>
+
+</body>
+</html>

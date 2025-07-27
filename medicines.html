@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Medicines - Aushadha Mitra</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            font-size: 28px;
+            color: #007bff;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #1a3b5d;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .search-button {
+            padding: 15px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #results-container {
+            margin-top: 20px;
+        }
+        .medicine-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 5px solid #007bff;
+        }
+        .medicine-card.generic {
+            border-left-color: #28a745;
+        }
+        .medicine-card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #1a3b5d;
+        }
+        .medicine-card .tag {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+            color: white;
+            background-color: #28a745;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .medicine-card .tag.branded {
+            background-color: #007bff;
+        }
+        .medicine-card p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .medicine-card .price {
+            font-weight: bold;
+            color: #333;
+        }
+        .order-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background-color: #ff9f00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+        }
+        
+        /* Enhanced Medicine Response Styling */
+        .medicine-response {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #007bff;
+        }
+        
+        .response-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .response-header h2 {
+            color: #1a3b5d;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .response-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .symptom-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+        }
+        
+        .alternative-suggestions {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .suggestion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .suggestion-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .suggestion-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* AI Modal Enhancement */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close:hover {
+            color: #333;
+            transform: scale(1.1);
+        }
+        
+        .ai-feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .order-confirmation {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #4caf50;
+            margin: 20px 0;
+        }
+        
+        .order-steps {
+            margin: 20px 0;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="index.html" class="back-button">&larr;</a>
+            <h1>Find Medicines</h1>
+        </header>
+
+        <div class="search-box">
+            <input type="text" id="symptom-input" class="search-input" placeholder="Try 'fever', 'cold', or 'headache'">
+            <button id="search-btn" class="search-button">Search</button>
+        </div>
+
+        <div id="results-container"></div>
+        <div id="warning-box" class="warning-box"></div>
+
+    </div>
+
+    <!-- AI Ordering Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>🤖 AI-Powered Medicine Ordering</h2>
+            
+            <div class="ai-feature">
+                <h3>✨ Smart AI Features</h3>
+                <p>Our AI agent will help you with:</p>
+                <ul>
+                    <li>✅ Verify prescription requirements</li>
+                    <li>✅ Check drug interactions</li>
+                    <li>✅ Find best prices from nearby pharmacies</li>
+                    <li>✅ Schedule convenient delivery</li>
+                </ul>
+            </div>
+            
+            <div class="order-steps">
+                <h3>Order Process:</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div>AI verifies medicine details and availability</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div>System checks for prescription requirements</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div>AI finds best prices from verified pharmacies</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div>Schedule delivery or pickup</div>
+                </div>
+            </div>
+            
+            <div id="order-status" style="margin: 20px 0; padding: 15px; border-radius: 8px; background-color: #e8f5e9; color: #2e7d32;">
+                <strong>✅ AI Order Processing Complete!</strong><br>
+                Medicine: <span id="medicine-name-display"></span><br>
+                Estimated delivery: 2-4 hours<br>
+                Order ID: <span id="order-id"></span>
+            </div>
+            
+            <button onclick="closeModal()" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">Close</button>
+        </div>
+    </div>
+
+  <script>
+    function aiOrderMedicine(medicineName) {
+      // Show the AI ordering modal
+      document.getElementById('orderModal').style.display = 'block';
+      
+      // Update medicine name in modal
+      document.getElementById('medicine-name-display').textContent = medicineName;
+      
+      // Generate random order ID
+      const orderId = 'AI-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('order-id').textContent = orderId;
+    }
+    
+    function closeModal() {
+      document.getElementById('orderModal').style.display = 'none';
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      const modal = document.getElementById('orderModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+        // --- ENHANCED MEDICINE DATABASE WITH COMPREHENSIVE RESPONSES ---
+        const medicineDatabase = {
+            "fever": {
+                "symptomInfo": {
+                    "description": "Fever is a temporary increase in body temperature, often due to an illness or infection.",
+                    "commonCauses": ["Viral infections", "Bacterial infections", "Heat exhaustion", "Certain medications"],
+                    "whenToSeekHelp": "Seek immediate medical attention if fever exceeds 103°F (39.4°C) or persists for more than 3 days."
+                },
+                "medicines": [
+                    { "name": "Paracetamol 500mg", "isGeneric": true, "dosage": "1 tablet every 6-8 hours", "instructions": "Take after food. Do not exceed 4 doses in 24 hours.", "price": "₹15 for 10 tablets", "effectiveness": "85%", "sideEffects": "Rare: Skin rash, nausea" },
+                    { "name": "Dolo 650", "isGeneric": false, "dosage": "1 tablet every 8 hours", "instructions": "Use if fever is high (>101°F).", "price": "₹35 for 15 tablets", "effectiveness": "90%", "sideEffects": "Minimal side effects" },
+                    { "name": "Crocin Advance", "isGeneric": false, "dosage": "1-2 tablets every 6 hours", "instructions": "For mild fever and body pain.", "price": "₹28 for 10 tablets", "effectiveness": "88%", "sideEffects": "Very rare: Allergic reactions" }
+                ],
+                "homeRemedies": ["Drink plenty of fluids", "Rest adequately", "Use cool compresses", "Wear light clothing"],
+                "alternatives": ["cough", "headache", "body pain"],
+                "overallWarning": "If fever persists for more than 3 days, consult a doctor."
+            },
+            "cold": {
+                "symptomInfo": {
+                    "description": "Common cold is a viral infection of the nose and throat (upper respiratory tract).",
+                    "commonCauses": ["Rhinovirus", "Coronavirus", "Respiratory syncytial virus", "Seasonal changes"],
+                    "whenToSeekHelp": "Consult a doctor if symptoms worsen or include high fever, severe headache, or difficulty breathing."
+                },
+                "medicines": [
+                    { "name": "Cetirizine 10mg", "isGeneric": true, "dosage": "1 tablet at night", "instructions": "For runny nose and sneezing. May cause drowsiness.", "price": "₹20 for 10 tablets", "effectiveness": "82%", "sideEffects": "Drowsiness, dry mouth" },
+                    { "name": "Vicks Action 500", "isGeneric": false, "dosage": "1 tablet every 6 hours", "instructions": "Relieves multiple cold symptoms like headache and blocked nose.", "price": "₹45 for 10 tablets", "effectiveness": "85%", "sideEffects": "Mild stomach upset" }
+                ],
+                "homeRemedies": ["Drink warm fluids", "Gargle with salt water", "Use a humidifier", "Get plenty of rest"],
+                "alternatives": ["cough", "fever", "sore throat"],
+                "overallWarning": "If you have a high fever or breathing difficulty with your cold, see a doctor."
+            },
+            "headache": {
+                "symptomInfo": {
+                    "description": "Headache is pain in any region of the head, often caused by tension, stress, or underlying conditions.",
+                    "commonCauses": ["Stress and tension", "Dehydration", "Lack of sleep", "Eye strain", "Sinus problems"],
+                    "whenToSeekHelp": "Seek immediate care for sudden severe headaches, headaches with fever, or those that worsen progressively."
+                },
+                "medicines": [
+                    { "name": "Ibuprofen 400mg", "isGeneric": true, "dosage": "1 tablet after food", "instructions": "Effective for tension headaches and migraines.", "price": "₹25 for 10 tablets", "effectiveness": "87%", "sideEffects": "Stomach irritation if taken on empty stomach" },
+                    { "name": "Saridon", "isGeneric": false, "dosage": "1 tablet when needed", "instructions": "Fast relief from headaches.", "price": "₹40 for 10 tablets", "effectiveness": "92%", "sideEffects": "Rare: Dizziness, nausea" }
+                ],
+                "homeRemedies": ["Apply cold or warm compress", "Practice relaxation techniques", "Stay hydrated", "Maintain regular sleep schedule"],
+                "alternatives": ["migraine", "stress", "fever"],
+                "overallWarning": "For frequent or severe headaches, medical consultation is necessary."
+            }
+        };
+
+        document.getElementById('search-btn').addEventListener('click', findMedicines);
+
+        function findMedicines() {
+            const symptomInput = document.getElementById('symptom-input').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('results-container');
+            const warningBox = document.getElementById('warning-box');
+
+            // Reset UI
+            resultsContainer.innerHTML = '';
+            warningBox.style.display = 'none';
+
+            if (!symptomInput) {
+                alert('Please enter a symptom.');
+                return;
+            }
+
+            // Find the data in our pre-loaded database
+            const data = medicineDatabase[symptomInput];
+
+            if (data) {
+                displayResults(data);
+            } else {
+                resultsContainer.innerHTML = `<p class="no-results">Sorry, no pre-loaded data for "${symptomInput}". Try 'fever', 'cold', or 'headache'.</p>`;
+            }
+        }
+
+        function displayResults(data) {
+            const resultsContainer = document.getElementById('results-container');
+            const warningBox = document.getElementById('warning-box');
+
+            // Create comprehensive AI response
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'medicine-response';
+            
+            let responseHTML = `
+                <div class="response-header">
+                    <h2>🤖 AI Medical Assistant Response</h2>
+                    <p style="color: #666; font-style: italic;">Comprehensive analysis and recommendations based on your symptoms</p>
+                </div>
+            `;
+
+            // Add symptom information if available
+            if (data.symptomInfo) {
+                responseHTML += `
+                    <div class="symptom-info">
+                        <h3>📋 About Your Symptom</h3>
+                        <p><strong>Description:</strong> ${data.symptomInfo.description}</p>
+                        <div style="margin: 15px 0;">
+                            <strong>Common Causes:</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                ${data.symptomInfo.commonCauses.map(cause => `<li>${cause}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div style="background: #ffebee; padding: 10px; border-radius: 5px; border-left: 4px solid #f44336;">
+                            <strong style="color: #d32f2f;">⚠️ When to Seek Medical Help:</strong><br>
+                            ${data.symptomInfo.whenToSeekHelp}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Add medicine recommendations
+            if (data.medicines && data.medicines.length > 0) {
+                responseHTML += `
+                    <div class="response-summary">
+                        <h3>💊 Recommended Medicines</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Based on your symptoms, here are the most suitable medicine options:</p>
+                    </div>
+                `;
+
+                data.medicines.forEach((med, index) => {
+                    const card = document.createElement('div');
+                    card.className = med.isGeneric ? 'medicine-card generic' : 'medicine-card';
+                    
+                    const tag = med.isGeneric ? '<span class="tag">Generic</span>' : '<span class="tag branded">Branded</span>';
+                    const effectiveness = med.effectiveness ? `<div style="display: flex; align-items: center; margin: 10px 0;"><strong>Effectiveness:</strong> <div style="background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 12px; margin-left: 10px; font-size: 12px;">${med.effectiveness}</div></div>` : '';
+                    const sideEffects = med.sideEffects ? `<p style="color: #d32f2f; font-size: 14px;"><strong>Side Effects:</strong> ${med.sideEffects}</p>` : '';
+
+                    card.innerHTML = `
+                        <h2>${med.name} ${tag}</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+                            <div>
+                                <p><strong>Dosage:</strong> ${med.dosage}</p>
+                                <p><strong>Instructions:</strong> ${med.instructions}</p>
+                            </div>
+                            <div>
+                                <p class="price"><strong>Price:</strong> ${med.price}</p>
+                                ${effectiveness}
+                            </div>
+                        </div>
+                        ${sideEffects}
+                        <button class="order-button" onclick="aiOrderMedicine('${med.name}')">🤖 AI Order Assistant</button>
+                    `;
+                    resultsContainer.appendChild(card);
+                });
+            }
+
+            // Add home remedies if available
+            if (data.homeRemedies && data.homeRemedies.length > 0) {
+                responseHTML += `
+                    <div style="background: #f3e5f5; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #9c27b0;">
+                        <h3>🏠 Natural Home Remedies</h3>
+                        <p style="color: #666; margin-bottom: 15px;">Try these natural approaches alongside or before medication:</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            ${data.homeRemedies.map(remedy => `
+                                <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    ✨ ${remedy}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Add alternative suggestions if available
+            if (data.alternatives && data.alternatives.length > 0) {
+                responseHTML += `
+                    <div class="alternative-suggestions">
+                        <h3>🔍 Related Symptoms You Might Also Search</h3>
+                        <p style="color: #666; margin-bottom: 15px;">If your symptoms don't exactly match, try searching for these related conditions:</p>
+                        <div class="suggestion-grid">
+                            ${data.alternatives.map(alt => `
+                                <div class="suggestion-item" onclick="searchAlternative('${alt}')">
+                                    <strong>${alt.charAt(0).toUpperCase() + alt.slice(1)}</strong>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            responseDiv.innerHTML = responseHTML;
+            resultsContainer.appendChild(responseDiv);
+
+            // Show warning if available
+            if (data.overallWarning) {
+                warningBox.innerHTML = `⚠️ <strong>Important Medical Advice:</strong> ${data.overallWarning}`;
+                warningBox.style.display = 'block';
+            }
+        }
+        
+        // Function to search for alternative symptoms
+        function searchAlternative(symptom) {
+            document.getElementById('symptom-input').value = symptom;
+            findMedicines();
+        }
+    </script>
+</body>
+</html>
