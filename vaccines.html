@@ -6,6 +6,31 @@
   <title>Vaccines - Aushadha Mitra</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    :root {
+        --primary-gradient: linear-gradient(90deg, #667eea, #764ba2);
+        --success-gradient: linear-gradient(90deg, #11998e, #38ef7d);
+        --text-dark: #1a3b5d;
+        --text-light: #555;
+        --border-radius: 12px;
+        --shadow-light: 0 4px 12px rgba(0,0,0,0.08);
+        --shadow-medium: 0 6px 16px rgba(0,0,0,0.1);
+        --shadow-heavy: 0 10px 25px rgba(0,0,0,0.15);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        background-color: #f4f7f9;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
     .vaccine-container {
       background: rgba(255,255,255,0.95);
       border-radius: var(--border-radius);
@@ -31,7 +56,7 @@
     
     .age-input-section {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
     
     .age-input {
@@ -51,8 +76,11 @@
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     
+    .action-buttons {
+        text-align: center;
+    }
+
     .recommend-btn {
-      background: var(--primary-gradient);
       color: white;
       padding: 15px 30px;
       border: none;
@@ -62,8 +90,10 @@
       cursor: pointer;
       transition: var(--transition);
       box-shadow: var(--shadow-light);
+      margin: 5px;
+      background: var(--primary-gradient);
     }
-    
+
     .recommend-btn:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-medium);
@@ -128,20 +158,18 @@
       line-height: 1.4;
     }
     
-    .vaccine-result {
-      background: rgba(255,255,255,0.95);
-      border-radius: var(--border-radius);
+    .result-box {
       padding: 30px;
-      margin-top: 30px;
-      box-shadow: var(--shadow-medium);
-      backdrop-filter: blur(10px);
+      margin-top: 30px; 
+      border-radius: var(--border-radius);
+      background: white;
       border-left: 5px solid #38ef7d;
     }
     
-    .vaccine-result h3 {
-      color: #11998e;
+    .result-box h3 {
       margin-top: 0;
       font-size: 1.5rem;
+      color: #11998e;
     }
     
     .vaccine-list {
@@ -201,10 +229,14 @@
       </div>
       
       <div class="age-input-section">
-        <label for="age" style="font-size: 1.2rem; font-weight: 600; color: var(--text-dark);">Enter your age:</label><br />
+        <label for="age" style="font-size: 1.2rem; font-weight: 600; color: var(--text-dark);">Enter your age for recommendations:</label><br />
         <input type="number" id="age" class="age-input" placeholder="e.g. 25" /><br>
+      </div>
+      <div class="action-buttons">
         <button class="recommend-btn" onclick="recommendVaccines()">Get Recommendations</button>
       </div>
+      
+      <div id="vaccine-result" class="result-box" style="display: none;"></div>
     </div>
     
     <div class="vaccine-container">
@@ -248,10 +280,10 @@
       </div>
     </div>
 
-    <div id="vaccine-result" class="vaccine-result" style="display: none;"></div>
   </div>
 
   <script>
+    // Data for different diseases and their corresponding vaccines
     const diseaseInfo = {
       'COVID-19': {
         description: 'A respiratory illness caused by SARS-CoV-2 virus',
@@ -291,10 +323,11 @@
       }
     };
 
+    // Function to display information when a disease card is clicked
     function showDiseaseInfo(diseaseName) {
       const info = diseaseInfo[diseaseName];
+      const resultDiv = document.getElementById('vaccine-result');
       if (info) {
-        const resultDiv = document.getElementById('vaccine-result');
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `
           <h3>🦠 ${diseaseName} Information</h3>
@@ -303,16 +336,19 @@
           <p><strong>Vaccine:</strong> ${info.vaccine}</p>
           <p><strong>Prevention:</strong> ${info.prevention}</p>
         `;
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
       }
     }
 
+    // Function to recommend vaccines based on the entered age
     function recommendVaccines() {
-      const age = parseInt(document.getElementById('age').value);
-      const result = document.getElementById('vaccine-result');
+      const ageInput = document.getElementById('age');
+      const age = parseInt(ageInput.value);
+      const resultDiv = document.getElementById('vaccine-result');
 
       if (!age || age <= 0) {
-        result.style.display = 'block';
-        result.innerHTML = "<p style='color:red;'>Please enter a valid age.</p>";
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = "<p style='color:red; text-align:center;'>Please enter a valid age.</p>";
         return;
       }
 
@@ -329,8 +365,8 @@
 
       const vaccineItems = vaccines.map(vaccine => `<div class="vaccine-item">${vaccine}</div>`).join('');
       
-      result.style.display = 'block';
-      result.innerHTML = `
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `
         <h3>💉 Recommended Vaccines for Age ${age}</h3>
         <div class="vaccine-list">
           ${vaccineItems}
@@ -340,7 +376,9 @@
           These are general recommendations and may vary based on your health condition and medical history.
         </p>
       `;
+       resultDiv.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
 </html>
+
